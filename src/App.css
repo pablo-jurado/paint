@@ -1,0 +1,113 @@
+body {
+  font-family: sans-serif;
+}
+
+body {
+  background: #BCBEBC;
+}
+
+.title {
+  color: white;
+  background: linear-gradient(to right, #0a396f 0%,#7db9e8 100%);
+  padding: 10px;
+  height: 20px;
+  position: relative;
+}
+.title .btns-wrapper {
+  position: absolute;
+  right: 5px;
+  top: 7px;
+}
+nav ul {
+  margin: 0;
+  padding: 0;
+  font-weight: 500;
+}
+nav li {
+  display: inline-block;
+  padding: 5px;
+}
+
+.dropdown-content {
+  display: none;
+  background: lightgrey;
+}
+
+.main-wrapper {
+  display: flex;
+}
+button {
+    margin: 0;
+    line-height: 1;
+    display: inline-block;
+    padding: 5px 8px;
+    background: #c0c0c0;
+    border-top: 2px solid white;
+    border-right: 2px solid #222;
+    border-bottom: 2px solid #222;
+    border-left: 2px solid white;
+    text-align: center;
+    color: #333;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+nav li:hover {
+  background: blue;
+  color: white;
+}
+
+.tools {
+  display: inline-block;
+  width: 90px;
+}
+
+.tools div {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  margin: 1px;
+  border-top: 2px solid white;
+  border-right: 2px solid #222;
+  border-bottom: 2px solid #222;
+  border-left: 2px solid white;
+}
+
+.tools div:hover {
+  opacity: 0.5;
+}
+
+.tools i {
+  margin: 7px;
+  color: black;
+}
+
+.tools .green { background: #4caf50; }
+.tools .red { background: #f44336; }
+.tools .orange { background: #ff9800; }
+.tools .blue { background: #3f51b5; }
+.tools .purple { background: #9c27b0; }
+.tools .cyan { background: #00bcd4; }
+
+.board {
+  border: solid 1px;
+  border-color: white white black black;
+  background: #808080;
+  padding: 5px;
+  width: 100%;
+}
+.square {
+  width: 10px;
+  height: 10px;
+/*   border-right: solid 1px #efefef;
+  border-top: solid 1px #efefef; */
+  display: inline-block;
+  background: white;
+}
+.square.on {
+  background: grey;
+}
+.row {
+  height: 10px;
+  display: flex;
+}
