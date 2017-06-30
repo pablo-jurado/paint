@@ -14,4 +14,10 @@ const row = 30
 const piece = 50
 let board = createNewBoard()
 
-export default board
+let appState = {
+  row: row,
+  piece: piece,
+  board: board
+}
+
+// export default appState

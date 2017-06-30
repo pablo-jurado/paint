@@ -1,13 +1,81 @@
 import React from 'react'
 import './App.css'
-import board from './Model'
+import { Map, List } from 'immutable'
+
 
 let mouseDown = null
 
+function App (state) {
+  let board = state.get('board')
+  let col = board.map(function (item, index) {
+    return <div key={index} className='row'>{Square(item, index)}</div>
+  })
+  return (
+    <div>
+      {header()}
+      {nav()}
+      <div className='main-wrapper'>
+        {Tools()}
+        <div className='board'>
+          {col}
+        </div>
+      </div>
+      <br />
+      <button onClick={clear}>clear</button>
+    </div>
+  )
+}
+
+function Square (rowMap, rowIndex) {
+  let classVal = ''
+  let piece = rowMap.map(function (item, i) {
+    if (item) {
+      classVal = 'square on'
+    } else {
+      classVal = 'square'
+    }
+    return <div key={i} onMouseUp={up}
+      onMouseDown={down}
+      onClick={handleClick.bind(null, rowIndex, i)}
+      onMouseOver={handleOver.bind(null, rowIndex, i)}
+      className={classVal} />
+  })
+  return piece
+}
+
+function handleClick (rowIdx, colIdx) {
+  const state = window.CURRENT_STATE
+  const board = state.get('board')
+  const row = board.get(rowIdx)
+
+  const newRow = row.set(colIdx, true)
+  const newBoard = board.set(rowIdx, newRow)
+  window.NEXT_STATE = window.NEXT_STATE.set('board', newBoard)
+}
+
+function handleOver (rowIndex, i) {
+  if (mouseDown) {
+    console.log('update', rowIndex, i)
+  }
+}
+
+function down () {
+  mouseDown = true
+}
+
+function up () {
+  mouseDown = false
+}
+
+function clear () {
+  // board = createNewBoard()
+  console.log('need to createNewBoard')
+}
+
 function Tools () {
   let colors = ['green', 'red', 'orange', 'blue', 'purple', 'cyan', 'orange', 'blue', 'purple', 'cyan']
-  let palet = colors.map(function (color) {
-    return <div className={color} />
+  let palet = colors.map(function (color, i) {
+    return <div key={i} className={color} />
   })
   return (
     <div className='tools'>
@@ -45,65 +113,6 @@ function header () {
         <button><i className='fa fa-window-maximize' /></button>
         <button><i className='fa fa-times' /></button>
       </div>
-    </div>
-  )
-}
-
-function Square (row, rowIndex) {
-  let classVal = ''
-  let piece = row.map(function (item, i) {
-    if (item) {
-      classVal = 'square on'
-    } else {
-      classVal = 'square'
-    }
-    return <div onMouseUp={up}
-      onMouseDown={down}
-      onClick={handleClick.bind(null, rowIndex, i)}
-      onMouseOver={handleOver.bind(null, rowIndex, i)}
-      key={i} className={classVal} />
-  })
-  return piece
-}
-
-function handleClick (rowIndex, i) {
-  board[rowIndex][i] = true
-}
-
-function handleOver (rowIndex, i) {
-  if (mouseDown) {
-    board[rowIndex][i] = true
-  }
-}
-
-function down () {
-  mouseDown = true
-}
-
-function up () {
-  mouseDown = false
-}
-
-function clear () {
-  // board = createNewBoard()
-}
-
-function App (board) {
-  let col = board.map(function (item, index) {
-    return <div key={index} className='row'>{Square(item, index)}</div>
-  })
-  return (
-    <div>
-      {header()}
-      {nav()}
-      <div className='main-wrapper'>
-        {Tools()}
-        <div className='board'>
-          {col}
-        </div>
-      </div>
-      <br />
-      <button onClick={clear}>clear</button>
     </div>
   )
 }

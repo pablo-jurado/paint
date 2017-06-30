@@ -97,10 +97,10 @@ nav li:hover {
   width: 100%;
 }
 .square {
-  width: 10px;
-  height: 10px;
-/*   border-right: solid 1px #efefef;
-  border-top: solid 1px #efefef; */
+  width: 30px;
+  height: 30px;
+  border-right: solid 1px #efefef;
+  border-top: solid 1px #efefef;
   display: inline-block;
   background: white;
 }
@@ -108,6 +108,6 @@ nav li:hover {
   background: grey;
 }
 .row {
-  height: 10px;
+  height: 30px;
   display: flex;
 }
