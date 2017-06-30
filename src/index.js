@@ -6,8 +6,8 @@ import { Map, List } from 'immutable'
 // ---------------------------------------------------------
 // App State
 // ---------------------------------------------------------
-const row = 5
-const piece = 5
+const row = 50
+const piece = 50
 let board = createNewBoard()
 
 function createNewBoard () {
@@ -55,7 +55,7 @@ function render () {
     ReactDOM.render(App(window.CURRENT_STATE), rootEl)
 
     renderCount = renderCount + 1
-    console.log('Render #' + renderCount)
+    // console.log('Render #' + renderCount)
   }
 
   window.requestAnimationFrame(render)

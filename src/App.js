@@ -44,18 +44,23 @@ function Square (rowMap, rowIndex) {
 }
 
 function handleClick (rowIdx, colIdx) {
-  const state = window.CURRENT_STATE
-  const board = state.get('board')
-  const row = board.get(rowIdx)
-
-  const newRow = row.set(colIdx, true)
-  const newBoard = board.set(rowIdx, newRow)
-  window.NEXT_STATE = window.NEXT_STATE.set('board', newBoard)
+  updateState(rowIdx, colIdx)
 }
 
-function handleOver (rowIndex, i) {
+function updateState (rowIdx, colIdx) {
+  // const state = window.CURRENT_STATE
+  // const board = state.get('board')
+  // const row = board.get(rowIdx)
+
+  // const newRow = row.set(colIdx, true)
+  // const newBoard = board.set(rowIdx, newRow)
+  // window.NEXT_STATE = state.set('board', newBoard)
+  window.NEXT_STATE = window.CURRENT_STATE.setIn(['board', rowIdx, colIdx], true)
+}
+
+function handleOver (rowIdx, colIdx) {
   if (mouseDown) {
-    console.log('update', rowIndex, i)
+    updateState(rowIdx, colIdx)
   }
 }
 
@@ -65,6 +70,7 @@ function down () {
 
 function up () {
   mouseDown = false
+  //console.log('save history')
 }
 
 function clear () {

@@ -97,8 +97,8 @@ nav li:hover {
   width: 100%;
 }
 .square {
-  width: 30px;
-  height: 30px;
+  width: 10px;
+  height: 10px;
   border-right: solid 1px #efefef;
   border-top: solid 1px #efefef;
   display: inline-block;
@@ -108,6 +108,6 @@ nav li:hover {
   background: grey;
 }
 .row {
-  height: 30px;
+  height: 10px;
   display: flex;
 }
