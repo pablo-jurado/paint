@@ -1,61 +1,30 @@
-import React from 'react'
 import './App.css'
-import { Map, List } from 'immutable'
-
+import React, { Component } from 'react'
+import mori from 'mori'
 
 let mouseDown = null
 
-function App (state) {
-  let board = state.get('board')
-  let col = board.map(function (item, index) {
-    return <div key={index} className='row'>{Square(item, index)}</div>
-  })
-  return (
-    <div>
-      {header()}
-      {nav()}
-      <div className='main-wrapper'>
-        {Tools()}
-        <div className='board'>
-          {col}
-        </div>
-      </div>
-      <br />
-      <button onClick={clear}>clear</button>
-    </div>
-  )
+// a MoriComponent receives a JavaScript Object with one key: imdata
+// imdata should be a mori structure that supports mori.equals() comparisons
+class MoriComponent extends Component {
+  // only update the component if the mori data structure is not equal
+  shouldComponentUpdate (nextProps, _nextState) {
+    return !mori.equals(this.props.imdata, nextProps.imdata)
+  }
 }
 
-function Square (rowMap, rowIndex) {
-  let classVal = ''
-  let piece = rowMap.map(function (item, i) {
-    if (item) {
-      classVal = 'square on'
-    } else {
-      classVal = 'square'
-    }
-    return <div key={i} onMouseUp={up}
-      onMouseDown={down}
-      onClick={handleClick.bind(null, rowIndex, i)}
-      onMouseOver={handleOver.bind(null, rowIndex, i)}
-      className={classVal} />
-  })
-  return piece
+function updateState (rowIdx, colIdx) {
+  const currentState = window.CURRENT_STATE
+  const newState = mori.updateIn(currentState, ['board', rowIdx, colIdx], getColor)
+  window.NEXT_STATE = newState
+}
+
+function getColor (x) {
+  return true
 }
 
 function handleClick (rowIdx, colIdx) {
   updateState(rowIdx, colIdx)
-}
-
-function updateState (rowIdx, colIdx) {
-  // const state = window.CURRENT_STATE
-  // const board = state.get('board')
-  // const row = board.get(rowIdx)
-
-  // const newRow = row.set(colIdx, true)
-  // const newBoard = board.set(rowIdx, newRow)
-  // window.NEXT_STATE = state.set('board', newBoard)
-  window.NEXT_STATE = window.CURRENT_STATE.setIn(['board', rowIdx, colIdx], true)
 }
 
 function handleOver (rowIdx, colIdx) {
@@ -70,12 +39,81 @@ function down () {
 
 function up () {
   mouseDown = false
-  //console.log('save history')
+  // console.log('save history')
 }
 
 function clear () {
-  // board = createNewBoard()
-  console.log('need to createNewBoard')
+  window.NEXT_STATE = mori.hashMap('board', window.EMPTY_BOARD)
+}
+
+class Square extends MoriComponent {
+  render () {
+    const isOn = mori.get(this.props.imdata, 'isOn')
+    const rowIdx = mori.get(this.props.imdata, 'rowIdx')
+    const colIdx = mori.get(this.props.imdata, 'colIdx')
+
+    let className = 'square'
+    if (isOn) className += ' on'
+
+    const key = 'square-' + rowIdx + '-' + colIdx
+
+    return (
+      <div key={key} className={className}
+        onMouseUp={up}
+        onMouseDown={down}
+        onClick={handleClick.bind(null, rowIdx, colIdx)}
+        onMouseOver={handleOver.bind(null, rowIdx, colIdx)}
+      />
+    )
+  }
+}
+
+class Row extends MoriComponent {
+  render () {
+    const rowVec = mori.get(this.props.imdata, 'rows')
+    const numCols = mori.count(rowVec)
+    const rowIdx = mori.get(this.props.imdata, 'rowIdx')
+
+    let squares = []
+    for (let colIdx = 0; colIdx < numCols; colIdx++) {
+      let isOn = mori.get(rowVec, colIdx)
+      let squareData = mori.hashMap('rowIdx', rowIdx, 'colIdx', colIdx, 'isOn', isOn)
+      let key = 'square-' + rowIdx + '-' + colIdx
+
+      squares.push(<Square imdata={squareData} key={key} />)
+    }
+
+    return (
+      <div className='row'>{squares}</div>
+    )
+  }
+}
+
+function App (props) {
+  const board = mori.get(props.imdata, 'board')
+  const numRows = mori.count(board)
+
+  let rows = []
+  for (let rowIdx = 0; rowIdx < numRows; rowIdx++) {
+    let rowVec = mori.get(board, rowIdx)
+    let rowData = mori.hashMap('rows', rowVec, 'rowIdx', rowIdx)
+    let key = 'row-' + rowIdx
+
+    rows.push(<Row imdata={rowData} key={key} />)
+  }
+
+  return (
+    <div>
+      {header()}
+      {nav()}
+      <div className='main-wrapper'>
+        {Tools()}
+        <div className='board'>{rows}</div>
+      </div>
+      <br />
+      <button onClick={clear}>clear</button>
+    </div>
+  )
 }
 
 function Tools () {

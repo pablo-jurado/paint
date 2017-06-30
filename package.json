@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "immutable": "^3.8.1",
+    "mori": "^0.3.2",
     "react": "^15.6.1",
     "react-dom": "^15.6.1"
   },
