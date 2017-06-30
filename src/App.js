@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import mori from 'mori'
 
 let mouseDown = null
+let colorSelected = 'black'
 
 // a MoriComponent receives a JavaScript Object with one key: imdata
 // imdata should be a mori structure that supports mori.equals() comparisons
@@ -104,30 +105,50 @@ function App (props) {
 
   return (
     <div>
-      {header()}
-      {nav()}
-      <div className='main-wrapper'>
-        {Tools()}
-        <div className='board'>{rows}</div>
+      <div className='paint'>
+        {header()}
+        {nav()}
+        <div className='main-wrapper'>
+          {Tools()}
+          <div className='board'>{rows}</div>
+        </div>
+        <br />
+        <button onClick={clear}>clear</button>
       </div>
-      <br />
-      <button onClick={clear}>clear</button>
+      <div className='bar'>
+        <a className='start-btn'>Start</a>
+      </div>
     </div>
   )
 }
 
 function Tools () {
-  let colors = ['green', 'red', 'orange', 'blue', 'purple', 'cyan', 'orange', 'blue', 'purple', 'cyan']
-  let palet = colors.map(function (color, i) {
-    return <div key={i} className={color} />
+  let colors = ['black', 'white', 'darkgrey', 'grey', 'darkgreen', 'green', 'red', 'orange', 'blue', 'cyan', 'purple', 'yellow']
+  let palet = colors.map(function (color) {
+    return <div onClick={clickColor} className={color} />
   })
   return (
     <div className='tools'>
-      <div className='pencil'><i className='fa fa-pencil' /></div>
-      <div className='erase'><i className='fa fa-eraser' /></div>
+      <div onClick={pencil} className='pencil'><i className='fa fa-pencil' /></div>
+      <div onClick={eraser} className='erase'><i className='fa fa-eraser' /></div>
       {palet}
+      <span className='main-color'>
+        <div className={colorSelected} />
+      </span>
     </div>
   )
+}
+
+function clickColor (evt) {
+  colorSelected = evt.target.className
+}
+
+function pencil () {
+  colorSelected = 'black'
+}
+
+function eraser () {
+  colorSelected = false
 }
 
 function nav () {
@@ -135,15 +156,32 @@ function nav () {
     <nav>
       <ul>
         <li>
-          <div className='btn-drop'>File</div>
-          <div className='dropdown-content'>
-            <div>Open</div>
-            <div>Save</div>
-            <div>Close</div>
+          <div className='dropdown'>
+            <div>File</div>
+            <div className='dropdown-menu'>
+              <div onClick={clear}>New File</div>
+              <div>Save</div>
+            </div>
           </div>
         </li>
-        <li>Edit</li>
-        <li>View</li>
+        <li>
+          <div className='dropdown'>
+            <div>Edit</div>
+            <div className='dropdown-menu'>
+              <div>Undo Ctrl+Z</div>
+              <div>Redo Ctrl+Y</div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div className='dropdown'>
+            <div>View</div>
+            <div className='dropdown-menu'>
+              <div>100%</div>
+              <div>50%</div>
+            </div>
+          </div>
+        </li>
       </ul>
     </nav>
   )
