@@ -20,8 +20,8 @@ function updateState (rowIdx, colIdx) {
   window.NEXT_STATE = newState
 }
 
-function getColor (x) {
-  return true
+function getColor () {
+  return colorSelected
 }
 
 function handleClick (rowIdx, colIdx) {
@@ -53,8 +53,8 @@ class Square extends MoriComponent {
     const rowIdx = mori.get(this.props.imdata, 'rowIdx')
     const colIdx = mori.get(this.props.imdata, 'colIdx')
 
-    let className = 'square'
-    if (isOn) className += ' on'
+    let className = 'square '
+    if (isOn) className += colorSelected
 
     const key = 'square-' + rowIdx + '-' + colIdx
 
