@@ -78,11 +78,14 @@ button {
   color: #333;
   font-weight: 800;
   text-decoration: none;
+  cursor: pointer;
 }
 
 nav li:hover {
   background: blue;
   color: white;
+  cursor: pointer;
+
 }
 
 .tools {
@@ -103,6 +106,7 @@ nav li:hover {
 
 .tools div:hover, button:hover {
   border-color: grey;
+  cursor: pointer;
 }
 
 .tools i {
@@ -140,10 +144,11 @@ nav li:hover {
 .square {
   width: 10px;
   height: 10px;
-  border-right: solid 1px #efefef;
-  border-top: solid 1px #efefef;
+  /*border-right: solid 1px #efefef;
+  border-top: solid 1px #efefef;*/
   display: inline-block;
   background: white;
+  cursor: crosshair;
 }
 
 .square.on {

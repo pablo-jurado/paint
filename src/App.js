@@ -5,6 +5,10 @@ import mori from 'mori'
 let mouseDown = null
 let colorSelected = 'black'
 
+const log = (...args) => {
+  console.log(...args.map(mori.toJs))
+}
+
 // a MoriComponent receives a JavaScript Object with one key: imdata
 // imdata should be a mori structure that supports mori.equals() comparisons
 class MoriComponent extends Component {
@@ -17,6 +21,13 @@ class MoriComponent extends Component {
 function updateState (rowIdx, colIdx) {
   const currentState = window.CURRENT_STATE
   const newState = mori.updateIn(currentState, ['board', rowIdx, colIdx], getColor)
+  window.NEXT_STATE = newState
+  // log(newState)
+}
+
+function updateColor () {
+  const currentState = window.CURRENT_STATE
+  const newState = mori.updateIn(currentState, ['color'], getColor)
   window.NEXT_STATE = newState
 }
 
@@ -49,17 +60,17 @@ function clear () {
 
 class Square extends MoriComponent {
   render () {
-    const isOn = mori.get(this.props.imdata, 'isOn')
     const rowIdx = mori.get(this.props.imdata, 'rowIdx')
     const colIdx = mori.get(this.props.imdata, 'colIdx')
+    const board = mori.get(this.props.imdata, 'board')
+    const row = mori.get(board, rowIdx)
+    const color = mori.get(row, colIdx)
 
     let className = 'square '
-    if (isOn) className += colorSelected
-
-    const key = 'square-' + rowIdx + '-' + colIdx
+    if (color) className = 'square ' + color
 
     return (
-      <div key={key} className={className}
+      <div className={className}
         onMouseUp={up}
         onMouseDown={down}
         onClick={handleClick.bind(null, rowIdx, colIdx)}
@@ -74,14 +85,13 @@ class Row extends MoriComponent {
     const rowVec = mori.get(this.props.imdata, 'rows')
     const numCols = mori.count(rowVec)
     const rowIdx = mori.get(this.props.imdata, 'rowIdx')
+    const board = mori.get(this.props.imdata, 'board')
 
     let squares = []
     for (let colIdx = 0; colIdx < numCols; colIdx++) {
-      let isOn = mori.get(rowVec, colIdx)
-      let squareData = mori.hashMap('rowIdx', rowIdx, 'colIdx', colIdx, 'isOn', isOn)
-      let key = 'square-' + rowIdx + '-' + colIdx
+      let squareData = mori.hashMap('rowIdx', rowIdx, 'colIdx', colIdx, 'board', board)
 
-      squares.push(<Square imdata={squareData} key={key} />)
+      squares.push(<Square imdata={squareData} key={colIdx} />)
     }
 
     return (
@@ -97,10 +107,9 @@ function App (props) {
   let rows = []
   for (let rowIdx = 0; rowIdx < numRows; rowIdx++) {
     let rowVec = mori.get(board, rowIdx)
-    let rowData = mori.hashMap('rows', rowVec, 'rowIdx', rowIdx)
-    let key = 'row-' + rowIdx
+    let rowData = mori.hashMap('rows', rowVec, 'rowIdx', rowIdx, 'board', board)
 
-    rows.push(<Row imdata={rowData} key={key} />)
+    rows.push(<Row imdata={rowData} key={rowIdx} />)
   }
 
   return (
@@ -124,8 +133,8 @@ function App (props) {
 
 function Tools () {
   let colors = ['black', 'white', 'darkgrey', 'grey', 'darkgreen', 'green', 'red', 'orange', 'blue', 'cyan', 'purple', 'yellow']
-  let palet = colors.map(function (color) {
-    return <div onClick={clickColor} className={color} />
+  let palet = colors.map(function (color, i) {
+    return <div key={i} onClick={clickColor} className={color} />
   })
   return (
     <div className='tools'>
@@ -141,6 +150,7 @@ function Tools () {
 
 function clickColor (evt) {
   colorSelected = evt.target.className
+  updateColor()
 }
 
 function pencil () {
