@@ -22,7 +22,9 @@ function updateState (rowIdx, colIdx) {
   const currentState = window.CURRENT_STATE
   const newState = mori.updateIn(currentState, ['board', rowIdx, colIdx], getColor)
   window.NEXT_STATE = newState
-  // log(newState)
+
+  // log('current', window.CURRENT_STATE)
+  // log('next', window.NEXT_STATE)
 }
 
 function updateColor () {
@@ -62,12 +64,10 @@ class Square extends MoriComponent {
   render () {
     const rowIdx = mori.get(this.props.imdata, 'rowIdx')
     const colIdx = mori.get(this.props.imdata, 'colIdx')
-    const board = mori.get(this.props.imdata, 'board')
-    const row = mori.get(board, rowIdx)
-    const color = mori.get(row, colIdx)
+    const color = mori.get(this.props.imdata, 'color')
 
     let className = 'square '
-    if (color) className = 'square ' + color
+    if (color) className += color
 
     return (
       <div className={className}
@@ -85,11 +85,14 @@ class Row extends MoriComponent {
     const rowVec = mori.get(this.props.imdata, 'rows')
     const numCols = mori.count(rowVec)
     const rowIdx = mori.get(this.props.imdata, 'rowIdx')
-    const board = mori.get(this.props.imdata, 'board')
-
     let squares = []
     for (let colIdx = 0; colIdx < numCols; colIdx++) {
-      let squareData = mori.hashMap('rowIdx', rowIdx, 'colIdx', colIdx, 'board', board)
+      const currentState = window.CURRENT_STATE
+      const board = mori.get(currentState, 'board')
+      const row = mori.get(board, rowIdx)
+      const color = mori.get(row, colIdx)
+
+      let squareData = mori.hashMap('rowIdx', rowIdx, 'colIdx', colIdx, 'color', color)
 
       squares.push(<Square imdata={squareData} key={colIdx} />)
     }
@@ -107,7 +110,7 @@ function App (props) {
   let rows = []
   for (let rowIdx = 0; rowIdx < numRows; rowIdx++) {
     let rowVec = mori.get(board, rowIdx)
-    let rowData = mori.hashMap('rows', rowVec, 'rowIdx', rowIdx, 'board', board)
+    let rowData = mori.hashMap('rows', rowVec, 'rowIdx', rowIdx)
 
     rows.push(<Row imdata={rowData} key={rowIdx} />)
   }
