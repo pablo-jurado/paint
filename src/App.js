@@ -3,9 +3,9 @@ import React, { Component } from 'react'
 import mori from 'mori'
 import Header from './Header'
 import { Nav, goBack, goForward } from './Nav'
+import Tools from './Tools'
 
 let mouseDown = null
-let colorSelected = 'black'
 
 const log = (...args) => {
   console.log(...args.map(mori.toJs))
@@ -22,18 +22,9 @@ class MoriComponent extends Component {
 
 function updateState (rowIdx, colIdx) {
   const currentState = window.CURRENT_STATE
-  const newState = mori.updateIn(currentState, ['board', rowIdx, colIdx], getColor)
+  const color = mori.get(currentState, 'color')
+  const newState = mori.assocIn(currentState, ['board', rowIdx, colIdx], color)
   window.NEXT_STATE = newState
-}
-
-function updateColor () {
-  const currentState = window.CURRENT_STATE
-  const newState = mori.updateIn(currentState, ['color'], getColor)
-  window.NEXT_STATE = newState
-}
-
-function getColor () {
-  return colorSelected
 }
 
 function handleOver (rowIdx, colIdx) {
@@ -52,21 +43,6 @@ function up () {
   mouseDown = false
 }
 
-function clickColor (evt) {
-  colorSelected = evt.target.className
-  updateColor()
-}
-
-function pencil () {
-  colorSelected = 'black'
-}
-
-function eraser () {
-  colorSelected = false
-}
-
-
-
 function saveHistory () {
   // increase history num
   const currentState = window.CURRENT_STATE
@@ -76,8 +52,6 @@ function saveHistory () {
   // updates state
   window.NEXT_STATE = newStateHistory
 }
-
-
 
 let keys = { control: false, z: false, y: false }
 
@@ -142,6 +116,7 @@ function App (props) {
   const board = mori.get(props.imdata, 'board')
   const numRows = mori.count(board)
   const view = mori.get(props.imdata, 'view')
+  const color = mori.get(props.imdata, 'color')
 
   let boardClass = 'board ' + 'v' + view
 
@@ -159,7 +134,7 @@ function App (props) {
         {Header()}
         {Nav()}
         <div className='main-wrapper'>
-          {Tools()}
+          {Tools(color)}
           <div className={boardClass}>{rows}</div>
         </div>
       </div>
@@ -169,24 +144,5 @@ function App (props) {
     </div>
   )
 }
-
-function Tools () {
-  let colors = ['black', 'white', 'darkgrey', 'grey', 'darkgreen', 'green', 'red', 'orange', 'blue', 'cyan', 'purple', 'yellow']
-  let palet = colors.map(function (color, i) {
-    return <div key={i} onClick={clickColor} className={color} />
-  })
-  return (
-    <div className='tools'>
-      <div onClick={pencil} className='pencil'><i className='fa fa-pencil' /></div>
-      <div onClick={eraser} className='erase'><i className='fa fa-eraser' /></div>
-      {palet}
-      <span className='main-color'>
-        <div className={colorSelected} />
-      </span>
-    </div>
-  )
-}
-
-
 
 export default App
