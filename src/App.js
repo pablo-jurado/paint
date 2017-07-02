@@ -67,7 +67,8 @@ function eraser () {
 }
 
 function clear () {
-  window.NEXT_STATE = mori.hashMap('board', window.EMPTY_BOARD)
+  window.NEXT_STATE = mori.hashMap('board', window.EMPTY_BOARD, 'color', 'black', 'history', 0)
+  window.HISTORY_STATE = [window.NEXT_STATE]
 }
 
 function saveHistory () {
@@ -166,17 +167,13 @@ function App (props) {
 
   return (
     <div>
-      <div tabIndex='0' onKeyDown={keyDownHandler} onKeyUp={keyUpHandler}  className='paint'>
+      <div tabIndex='0' onKeyDown={keyDownHandler} onKeyUp={keyUpHandler} className='paint'>
         {header()}
         {nav()}
         <div className='main-wrapper'>
           {Tools()}
           <div className='board'>{rows}</div>
         </div>
-        <br />
-        <button onClick={goBack}>go back</button>
-        <button onClick={goForward}>go forward</button>
-
       </div>
       <div className='bar'>
         <a className='start-btn'>Start</a>
@@ -228,8 +225,8 @@ function nav () {
           <div className='dropdown'>
             <div>View</div>
             <div className='dropdown-menu'>
-              <div>100%</div>
               <div>50%</div>
+              <div>100%</div>
             </div>
           </div>
         </li>
