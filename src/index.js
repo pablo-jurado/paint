@@ -7,8 +7,8 @@ import './index.css'
 // Application State
 // -----------------------------------------------------------------------------
 
-const numRows = 50
-const numCols = 80
+const numRows = 80
+const numCols = 150
 
 function createEmptyBoard () {
   var board = []

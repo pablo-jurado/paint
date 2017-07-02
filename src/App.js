@@ -34,23 +34,20 @@ function getColor () {
   return colorSelected
 }
 
-function handleClick (rowIdx, colIdx) {
-  updateState(rowIdx, colIdx)
-}
-
 function handleOver (rowIdx, colIdx) {
   if (mouseDown) {
     updateState(rowIdx, colIdx)
   }
 }
 
-function down () {
+function down (rowIdx, colIdx) {
   mouseDown = true
+  updateState(rowIdx, colIdx)
 }
 
 function up () {
-  mouseDown = false
   saveHistory()
+  mouseDown = false
 }
 
 function clickColor (evt) {
@@ -128,8 +125,7 @@ class Square extends MoriComponent {
     return (
       <div className={className}
         onMouseUp={up}
-        onMouseDown={down}
-        onClick={handleClick.bind(null, rowIdx, colIdx)}
+        onMouseDown={down.bind(null, rowIdx, colIdx)}
         onMouseOver={handleOver.bind(null, rowIdx, colIdx)}
       />
     )
