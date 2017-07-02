@@ -92,6 +92,23 @@ function goForward () {
   window.NEXT_STATE = window.HISTORY_STATE[incHistoryNum]
 }
 
+let keys = { control: false, z: false, y: false }
+
+function keyDownHandler (event) {
+  if (event.keyCode === 17) keys.control = true
+  if (event.keyCode === 90) keys.z = true
+  if (event.keyCode === 89) keys.y = true
+
+  if (keys.control && keys.z) goBack()
+  if (keys.control && keys.y) goForward()
+}
+
+function keyUpHandler (event) {
+  if (event.keyCode === 17) keys.control = false
+  if (event.keyCode === 90) keys.z = false
+  if (event.keyCode === 89) keys.y = false
+}
+
 class Square extends MoriComponent {
   render () {
     const rowIdx = mori.get(this.props.imdata, 'rowIdx')
@@ -149,7 +166,7 @@ function App (props) {
 
   return (
     <div>
-      <div className='paint'>
+      <div tabIndex='0' onKeyDown={keyDownHandler} onKeyUp={keyUpHandler}  className='paint'>
         {header()}
         {nav()}
         <div className='main-wrapper'>
@@ -202,8 +219,8 @@ function nav () {
           <div className='dropdown'>
             <div>Edit</div>
             <div className='dropdown-menu'>
-              <div>Undo Ctrl+Z</div>
-              <div>Redo Ctrl+Y</div>
+              <div onClick={goBack}>Undo Ctrl+Z</div>
+              <div onClick={goForward}>Redo Ctrl+Y</div>
             </div>
           </div>
         </li>
