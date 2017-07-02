@@ -1,57 +1,11 @@
 import './App.css'
-import React, { Component } from 'react'
+import React from 'react'
 import mori from 'mori'
+import { MoriComponent } from './MoriComponent'
 import Header from './Header'
 import { Nav, goBack, goForward } from './Nav'
 import Tools from './Tools'
-
-let mouseDown = null
-
-const log = (...args) => {
-  console.log(...args.map(mori.toJs))
-}
-
-// a MoriComponent receives a JavaScript Object with one key: imdata
-// imdata should be a mori structure that supports mori.equals() comparisons
-class MoriComponent extends Component {
-  // only update the component if the mori data structure is not equal
-  shouldComponentUpdate (nextProps, _nextState) {
-    return !mori.equals(this.props.imdata, nextProps.imdata)
-  }
-}
-
-function updateState (rowIdx, colIdx) {
-  const currentState = window.CURRENT_STATE
-  const color = mori.get(currentState, 'color')
-  const newState = mori.assocIn(currentState, ['board', rowIdx, colIdx], color)
-  window.NEXT_STATE = newState
-}
-
-function handleOver (rowIdx, colIdx) {
-  if (mouseDown) {
-    updateState(rowIdx, colIdx)
-  }
-}
-
-function down (rowIdx, colIdx) {
-  mouseDown = true
-  updateState(rowIdx, colIdx)
-}
-
-function up () {
-  saveHistory()
-  mouseDown = false
-}
-
-function saveHistory () {
-  // increase history num
-  const currentState = window.CURRENT_STATE
-  const newStateHistory = mori.updateIn(currentState, ['history'], mori.inc)
-  // saves in history
-  window.HISTORY_STATE.push(newStateHistory)
-  // updates state
-  window.NEXT_STATE = newStateHistory
-}
+import Square from './Square'
 
 let keys = { control: false, z: false, y: false }
 
@@ -68,25 +22,6 @@ function keyUpHandler (event) {
   if (event.keyCode === 17) keys.control = false
   if (event.keyCode === 90) keys.z = false
   if (event.keyCode === 89) keys.y = false
-}
-
-class Square extends MoriComponent {
-  render () {
-    const rowIdx = mori.get(this.props.imdata, 'rowIdx')
-    const colIdx = mori.get(this.props.imdata, 'colIdx')
-    const color = mori.get(this.props.imdata, 'color')
-
-    let className = 'square '
-    if (color) className += color
-
-    return (
-      <div className={className}
-        onMouseUp={up}
-        onMouseDown={down.bind(null, rowIdx, colIdx)}
-        onMouseOver={handleOver.bind(null, rowIdx, colIdx)}
-      />
-    )
-  }
 }
 
 class Row extends MoriComponent {
@@ -118,7 +53,7 @@ function App (props) {
   const view = mori.get(props.imdata, 'view')
   const color = mori.get(props.imdata, 'color')
 
-  let boardClass = 'board ' + 'v' + view
+  let boardClass = `board v${view}`
 
   let rows = []
   for (let rowIdx = 0; rowIdx < numRows; rowIdx++) {

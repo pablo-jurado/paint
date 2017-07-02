@@ -1,7 +1,6 @@
 import ReactDOM from 'react-dom'
 import App from './App'
 import mori from 'mori'
-import './index.css'
 
 // -----------------------------------------------------------------------------
 // Application State
@@ -43,9 +42,6 @@ window.HISTORY_STATE.push(window.NEXT_STATE)
 
 let renderCount = 0
 
-// You can track each application state using a mori vector.
-// window.HISTORY = mori.vec()
-
 // -----------------------------------------------------------------------------
 // Render Loop
 // -----------------------------------------------------------------------------
@@ -66,9 +62,6 @@ function render () {
       // next state is now our current state
       window.CURRENT_STATE = window.NEXT_STATE
 
-      // you might add this new state to your history vector here...
-      // window.HISTORY = mori.conj(window.HISTORY, window.CURRENT_STATE)
-
       ReactDOM.render(App({imdata: window.CURRENT_STATE}), rootEl)
 
       renderCount = renderCount + 1
@@ -84,9 +77,7 @@ window.requestAnimationFrame(render)
 // this is a sanity-check function so you can ensure your state is valid
 function isValidState (state) {
   return (
-         // true
           mori.isMap(state) &&
           mori.isVector(mori.get(state, 'board'))
-         // TODO: add more conditions here as appropriate
   )
 }
