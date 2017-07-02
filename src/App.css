@@ -9,7 +9,7 @@ body {
   padding: 10px;
   padding-bottom: 20px;
   margin: 20px;
-  border: solid 1px grey;
+  border: solid 1px black;
 }
 
 .title {
@@ -135,7 +135,7 @@ nav li:hover {
 
 .board {
   border: solid 1px;
-  border-color: white white black black;
+  border-color: black;
   background: #808080;
   padding: 5px;
   width: 100%;
@@ -151,15 +151,14 @@ nav li:hover {
   cursor: crosshair;
 }
 
-.square.on {
-  background: grey;
-}
-
 .row {
   height: 10px;
   display: flex;
 }
 
+.square.on {
+  background: grey;
+}
 
 .bar {
   background: #c0c0c0;

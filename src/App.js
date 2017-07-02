@@ -22,9 +22,6 @@ function updateState (rowIdx, colIdx) {
   const currentState = window.CURRENT_STATE
   const newState = mori.updateIn(currentState, ['board', rowIdx, colIdx], getColor)
   window.NEXT_STATE = newState
-
-  // log('current', window.CURRENT_STATE)
-  // log('next', window.NEXT_STATE)
 }
 
 function updateColor () {
@@ -49,15 +46,53 @@ function handleOver (rowIdx, colIdx) {
 
 function down () {
   mouseDown = true
+  saveHistory()
 }
 
 function up () {
   mouseDown = false
-  // console.log('save history')
+}
+
+function clickColor (evt) {
+  colorSelected = evt.target.className
+  updateColor()
+}
+
+function pencil () {
+  colorSelected = 'black'
+}
+
+function eraser () {
+  colorSelected = false
 }
 
 function clear () {
   window.NEXT_STATE = mori.hashMap('board', window.EMPTY_BOARD)
+}
+
+function saveHistory () {
+  // save current state in history
+  window.STATE_HISTORY.push(window.CURRENT_STATE)
+  let histoNum = window.STATE_HISTORY.length
+  const newState = mori.assoc(window.CURRENT_STATE, 'history', histoNum)
+  window.NEXT_STATE = newState
+}
+
+function goBack () {
+  const historyState = mori.updateIn(window.CURRENT_STATE, ['history'], mori.dec)
+  const historyNum = mori.get(historyState, 'history')
+
+  window.NEXT_STATE = window.STATE_HISTORY[historyNum]
+}
+
+function goForward () {
+  const historyState = mori.updateIn(window.CURRENT_STATE, ['history'], mori.inc)
+  const historyNum = mori.get(historyState, 'history')
+
+  log('historyNum', historyNum)
+  log('length', window.STATE_HISTORY.length)
+
+  window.NEXT_STATE = window.STATE_HISTORY[historyNum]
 }
 
 class Square extends MoriComponent {
@@ -125,7 +160,9 @@ function App (props) {
           <div className='board'>{rows}</div>
         </div>
         <br />
-        <button onClick={clear}>clear</button>
+        <button onClick={goBack}>go back</button>
+        <button onClick={goForward}>go forward</button>
+
       </div>
       <div className='bar'>
         <a className='start-btn'>Start</a>
@@ -149,19 +186,6 @@ function Tools () {
       </span>
     </div>
   )
-}
-
-function clickColor (evt) {
-  colorSelected = evt.target.className
-  updateColor()
-}
-
-function pencil () {
-  colorSelected = 'black'
-}
-
-function eraser () {
-  colorSelected = false
 }
 
 function nav () {
@@ -202,7 +226,8 @@ function nav () {
 
 function header () {
   return (
-    <div className='title'><i className='fa fa-paint-brush' /> Untitled - Paint
+    <div className='title'>
+      <i className='fa fa-paint-brush' /> Untitled - Paint
       <div className='btns-wrapper'>
         <button><i className='fa fa-window-minimize' /></button>
         <button><i className='fa fa-window-maximize' /></button>

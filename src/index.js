@@ -27,11 +27,14 @@ window.EMPTY_BOARD = mori.toClj(createEmptyBoard())
 
 const initialState = {
   board: window.EMPTY_BOARD,
-  color: 'black'
+  color: 'black',
+  history: 0
 }
 
 // CURRENT_STATE is always the current state of the application
 window.CURRENT_STATE = null
+
+window.STATE_HISTORY = []
 
 // NEXT_STATE is the next state the application should be in
 // Start it off with a PDS version of our initialState object.
@@ -79,7 +82,10 @@ window.requestAnimationFrame(render)
 
 // this is a sanity-check function so you can ensure your state is valid
 function isValidState (state) {
-  return mori.isMap(state) &&
+  return (
+         // true
+          mori.isMap(state) &&
          mori.isVector(mori.get(state, 'board'))
          // TODO: add more conditions here as appropriate
+  )
 }
