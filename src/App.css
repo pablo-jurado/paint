@@ -144,8 +144,6 @@ nav li:hover {
 .square {
   width: 10px;
   height: 10px;
-  /*border-right: solid 1px #efefef;
-  border-top: solid 1px #efefef;*/
   display: inline-block;
   background: white;
   cursor: crosshair;
@@ -155,6 +153,13 @@ nav li:hover {
   height: 10px;
   display: flex;
 }
+
+.v100 .square { width: 10px; height: 10px; }
+.v100 .row { height: 10px; }
+
+.v50 .square { width: 5px; height: 5px; }
+.v50 .row { height: 5px; }
+
 
 .square.on {
   background: grey;

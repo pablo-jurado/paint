@@ -67,7 +67,7 @@ function eraser () {
 }
 
 function clear () {
-  window.NEXT_STATE = mori.hashMap('board', window.EMPTY_BOARD, 'color', 'black', 'history', 0)
+  window.NEXT_STATE = mori.hashMap('board', window.EMPTY_BOARD, 'color', 'black', 'history', 0, 'view', 100)
   window.HISTORY_STATE = [window.NEXT_STATE]
 }
 
@@ -108,6 +108,12 @@ function keyUpHandler (event) {
   if (event.keyCode === 17) keys.control = false
   if (event.keyCode === 90) keys.z = false
   if (event.keyCode === 89) keys.y = false
+}
+
+function changeView (num) {
+  const state = window.CURRENT_STATE
+  const newState = mori.assoc(state, 'view', num)
+  window.NEXT_STATE = newState
 }
 
 class Square extends MoriComponent {
@@ -156,6 +162,9 @@ class Row extends MoriComponent {
 function App (props) {
   const board = mori.get(props.imdata, 'board')
   const numRows = mori.count(board)
+  const view = mori.get(props.imdata, 'view')
+
+  let boardClass = 'board ' + 'v' + view
 
   let rows = []
   for (let rowIdx = 0; rowIdx < numRows; rowIdx++) {
@@ -172,7 +181,7 @@ function App (props) {
         {nav()}
         <div className='main-wrapper'>
           {Tools()}
-          <div className='board'>{rows}</div>
+          <div className={boardClass}>{rows}</div>
         </div>
       </div>
       <div className='bar'>
@@ -209,6 +218,7 @@ function nav () {
             <div className='dropdown-menu'>
               <div onClick={clear}>New File</div>
               <div>Save</div>
+              <div>Open</div>
             </div>
           </div>
         </li>
@@ -225,8 +235,8 @@ function nav () {
           <div className='dropdown'>
             <div>View</div>
             <div className='dropdown-menu'>
-              <div>50%</div>
-              <div>100%</div>
+              <div onClick={changeView.bind(null, 50)}>50%</div>
+              <div onClick={changeView.bind(null, 100)}>100%</div>
             </div>
           </div>
         </li>

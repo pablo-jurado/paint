@@ -27,7 +27,8 @@ window.EMPTY_BOARD = mori.toClj(createEmptyBoard())
 const initialState = {
   board: window.EMPTY_BOARD,
   color: 'black',
-  history: 0
+  history: 0,
+  view: 100
 }
 
 // CURRENT_STATE is always the current state of the application
