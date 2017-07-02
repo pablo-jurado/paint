@@ -1,6 +1,8 @@
 import './App.css'
 import React, { Component } from 'react'
 import mori from 'mori'
+import Header from './Header'
+import { Nav, goBack, goForward } from './Nav'
 
 let mouseDown = null
 let colorSelected = 'black'
@@ -63,10 +65,7 @@ function eraser () {
   colorSelected = false
 }
 
-function clear () {
-  window.NEXT_STATE = mori.hashMap('board', window.EMPTY_BOARD, 'color', 'black', 'history', 0, 'view', 100)
-  window.HISTORY_STATE = [window.NEXT_STATE]
-}
+
 
 function saveHistory () {
   // increase history num
@@ -78,17 +77,7 @@ function saveHistory () {
   window.NEXT_STATE = newStateHistory
 }
 
-function goBack () {
-  const historyNum = mori.get(window.CURRENT_STATE, 'history')
-  const decHistoryNum = mori.dec(historyNum)
-  window.NEXT_STATE = window.HISTORY_STATE[decHistoryNum]
-}
 
-function goForward () {
-  const historyNum = mori.get(window.CURRENT_STATE, 'history')
-  const incHistoryNum = mori.inc(historyNum)
-  window.NEXT_STATE = window.HISTORY_STATE[incHistoryNum]
-}
 
 let keys = { control: false, z: false, y: false }
 
@@ -105,12 +94,6 @@ function keyUpHandler (event) {
   if (event.keyCode === 17) keys.control = false
   if (event.keyCode === 90) keys.z = false
   if (event.keyCode === 89) keys.y = false
-}
-
-function changeView (num) {
-  const state = window.CURRENT_STATE
-  const newState = mori.assoc(state, 'view', num)
-  window.NEXT_STATE = newState
 }
 
 class Square extends MoriComponent {
@@ -173,8 +156,8 @@ function App (props) {
   return (
     <div>
       <div tabIndex='0' onKeyDown={keyDownHandler} onKeyUp={keyUpHandler} className='paint'>
-        {header()}
-        {nav()}
+        {Header()}
+        {Nav()}
         <div className='main-wrapper'>
           {Tools()}
           <div className={boardClass}>{rows}</div>
@@ -204,54 +187,6 @@ function Tools () {
   )
 }
 
-function nav () {
-  return (
-    <nav>
-      <ul>
-        <li>
-          <div className='dropdown'>
-            <div>File</div>
-            <div className='dropdown-menu'>
-              <div onClick={clear}>New File</div>
-              <div>Save</div>
-              <div>Open</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div className='dropdown'>
-            <div>Edit</div>
-            <div className='dropdown-menu'>
-              <div onClick={goBack}>Undo Ctrl+Z</div>
-              <div onClick={goForward}>Redo Ctrl+Y</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div className='dropdown'>
-            <div>View</div>
-            <div className='dropdown-menu'>
-              <div onClick={changeView.bind(null, 50)}>50%</div>
-              <div onClick={changeView.bind(null, 100)}>100%</div>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </nav>
-  )
-}
 
-function header () {
-  return (
-    <div className='title'>
-      <i className='fa fa-paint-brush' /> Untitled - Paint
-      <div className='btns-wrapper'>
-        <button><i className='fa fa-window-minimize' /></button>
-        <button><i className='fa fa-window-maximize' /></button>
-        <button><i className='fa fa-times' /></button>
-      </div>
-    </div>
-  )
-}
 
 export default App
