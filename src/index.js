@@ -27,7 +27,8 @@ const initialState = {
   board: window.EMPTY_BOARD,
   color: 'black',
   history: 0,
-  view: 100
+  view: 100,
+  modal: null
 }
 
 // CURRENT_STATE is always the current state of the application

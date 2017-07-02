@@ -24,6 +24,16 @@ function changeView (num) {
   window.NEXT_STATE = newState
 }
 
+function toggleModal (modalType) {
+  const state = window.CURRENT_STATE
+  const newState = mori.assoc(state, 'modal', modalType)
+  window.NEXT_STATE = newState
+}
+
+function newFile () {
+  clear()
+}
+
 function Nav () {
   return (
     <nav>
@@ -32,9 +42,9 @@ function Nav () {
           <div className='dropdown'>
             <div>File</div>
             <div className='dropdown-menu'>
-              <div onClick={clear}>New File</div>
-              <div>Save</div>
-              <div>Open</div>
+              <div onClick={newFile}>New File</div>
+              <div onClick={toggleModal.bind(null, 'Save File')}>Save</div>
+              <div onClick={toggleModal.bind(null, 'Open File')}>Open</div>
             </div>
           </div>
         </li>
@@ -61,4 +71,4 @@ function Nav () {
   )
 }
 
-export { Nav, goBack, goForward }
+export { Nav, goBack, goForward, toggleModal }

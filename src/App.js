@@ -6,6 +6,7 @@ import Header from './Header'
 import { Nav, goBack, goForward } from './Nav'
 import Tools from './Tools'
 import Square from './Square'
+import Modal from './Modal'
 
 let keys = { control: false, z: false, y: false }
 
@@ -52,6 +53,7 @@ function App (props) {
   const numRows = mori.count(board)
   const view = mori.get(props.imdata, 'view')
   const color = mori.get(props.imdata, 'color')
+  const modal = mori.get(props.imdata, 'modal')
 
   let boardClass = `board v${view}`
 
@@ -76,6 +78,7 @@ function App (props) {
       <div className='bar'>
         <a className='start-btn'>Start</a>
       </div>
+      {Modal(modal)}
     </div>
   )
 }
