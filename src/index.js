@@ -19,7 +19,6 @@ function createEmptyBoard () {
       board[i][j] = false
     }
   }
-
   return board
 }
 
@@ -34,11 +33,12 @@ const initialState = {
 // CURRENT_STATE is always the current state of the application
 window.CURRENT_STATE = null
 
-window.STATE_HISTORY = []
-
 // NEXT_STATE is the next state the application should be in
 // Start it off with a PDS version of our initialState object.
 window.NEXT_STATE = mori.toClj(initialState)
+
+window.HISTORY_STATE = []
+window.HISTORY_STATE.push(window.NEXT_STATE)
 
 let renderCount = 0
 
@@ -85,7 +85,7 @@ function isValidState (state) {
   return (
          // true
           mori.isMap(state) &&
-         mori.isVector(mori.get(state, 'board'))
+          mori.isVector(mori.get(state, 'board'))
          // TODO: add more conditions here as appropriate
   )
 }
