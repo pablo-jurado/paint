@@ -28,9 +28,10 @@ const initialState = {
   board: window.EMPTY_BOARD,
   color: 'black',
   history: 0,
+  dbFiles: null,
   view: 100,
   modal: null,
-  title: 'Untitled'
+  title: 'Untitled....'
 }
 
 // CURRENT_STATE is always the current state of the application
@@ -54,7 +55,7 @@ function downloadFormDb () {
   dbRef.on('value', (snapshot) => {
     // success
     let dbData = snapshot.val()
-    console.log(dbData)
+    window.NEXT_STATE = mori.assoc(window.CURRENT_STATE, 'dbFiles', dbData)
   }, function () {
     console.log('error')
   })

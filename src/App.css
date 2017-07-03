@@ -232,9 +232,11 @@ nav li:hover {
 .modal-body {
   border: solid 1px black;
   background: #fff;
-  width: 380px;
-  height: 200px;
+  width: 360px;
+  height: 180px;
   margin: 10px;
+  padding: 10px;
+  overflow-y: scroll;
 }
 
 .modal-footer {

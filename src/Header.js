@@ -1,9 +1,9 @@
 import React from 'react'
 
-function Header () {
+function Header (title) {
   return (
     <div className='title'>
-      <i className='fa fa-paint-brush' /> Untitled - Paint
+      <i className='fa fa-paint-brush' /> {title} - Paint
       <div className='btns-wrapper'>
         <button><i className='fa fa-window-minimize' /></button>
         <button><i className='fa fa-window-maximize' /></button>

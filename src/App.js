@@ -54,6 +54,8 @@ function App (props) {
   const view = mori.get(props.imdata, 'view')
   const color = mori.get(props.imdata, 'color')
   const modal = mori.get(props.imdata, 'modal')
+  const title = mori.get(props.imdata, 'title')
+  const dbFiles = mori.get(props.imdata, 'dbFiles')
 
   let boardClass = `board v${view}`
 
@@ -68,7 +70,7 @@ function App (props) {
   return (
     <div>
       <div tabIndex='0' onKeyDown={keyDownHandler} onKeyUp={keyUpHandler} className='paint'>
-        {Header()}
+        {Header(title)}
         {Nav()}
         <div className='main-wrapper'>
           {Tools(color)}
@@ -78,7 +80,7 @@ function App (props) {
       <div className='bar'>
         <a className='start-btn'>Start</a>
       </div>
-      {Modal(modal)}
+      {Modal(modal, title, dbFiles)}
     </div>
   )
 }
