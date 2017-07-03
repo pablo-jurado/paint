@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom'
 import App from './App'
 import mori from 'mori'
+import firebase from './firebase'
 
 // -----------------------------------------------------------------------------
 // Application State
@@ -28,7 +29,8 @@ const initialState = {
   color: 'black',
   history: 0,
   view: 100,
-  modal: null
+  modal: null,
+  title: 'Untitled'
 }
 
 // CURRENT_STATE is always the current state of the application
@@ -41,11 +43,34 @@ window.NEXT_STATE = mori.toClj(initialState)
 window.HISTORY_STATE = []
 window.HISTORY_STATE.push(window.NEXT_STATE)
 
-let renderCount = 0
+// -----------------------------------------------------------------------------
+// DB
+// -----------------------------------------------------------------------------
+
+function downloadFormDb () {
+  // loading state
+  console.log('loading db...')
+  const dbRef = firebase.database().ref('files')
+  dbRef.on('value', (snapshot) => {
+    // success
+    let dbData = snapshot.val()
+    console.log(dbData)
+  }, function () {
+    console.log('error')
+  })
+}
+
+function saveToDb (file) {
+  const filesRef = firebase.database().ref('files')
+  filesRef.push(file)
+}
+
+downloadFormDb()
 
 // -----------------------------------------------------------------------------
 // Render Loop
 // -----------------------------------------------------------------------------
+let renderCount = 0
 
 const rootEl = document.getElementById('root')
 
