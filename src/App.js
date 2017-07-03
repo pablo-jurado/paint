@@ -55,6 +55,7 @@ function App (props) {
   const color = mori.get(props.imdata, 'color')
   const modal = mori.get(props.imdata, 'modal')
   const title = mori.get(props.imdata, 'title')
+  const modalInput = mori.get(props.imdata, 'modalInput')
   const dbFiles = mori.get(props.imdata, 'dbFiles')
 
   let boardClass = `board v${view}`
@@ -80,7 +81,7 @@ function App (props) {
       <div className='bar'>
         <a className='start-btn'>Start</a>
       </div>
-      {Modal(modal, title, dbFiles)}
+      {Modal(modal, modalInput, dbFiles)}
     </div>
   )
 }

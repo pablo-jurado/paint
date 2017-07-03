@@ -31,7 +31,8 @@ const initialState = {
   dbFiles: null,
   view: 100,
   modal: null,
-  title: 'Untitled....'
+  modalInput: '',
+  title: 'Untitled'
 }
 
 // CURRENT_STATE is always the current state of the application

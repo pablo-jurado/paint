@@ -24,9 +24,10 @@ function changeView (num) {
   window.NEXT_STATE = newState
 }
 
-function toggleModal (modalType) {
-  const state = window.CURRENT_STATE
-  const newState = mori.assoc(state, 'modal', modalType)
+function toggleModal (isShowingModal) {
+  let newState = mori.assoc(window.CURRENT_STATE, 'modal', isShowingModal)
+  newState = mori.assoc(newState, 'modalInput', '')
+
   window.NEXT_STATE = newState
 }
 
