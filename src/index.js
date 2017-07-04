@@ -33,6 +33,7 @@ const initialState = {
   modal: {
     modalType: false,
     input: '',
+    selectedFile: null,
     dbFiles: null
   }
 }

@@ -232,11 +232,20 @@ nav li:hover {
 .modal-body {
   border: solid 1px black;
   background: #fff;
-  width: 360px;
   height: 180px;
   margin: 10px;
-  padding: 10px;
+  padding: 0;
   overflow-y: scroll;
+}
+
+.modal li {
+  list-style: none;
+  padding: 5px 10px;
+}
+
+.modal li.selected {
+  background: blue;
+  color: #fff;
 }
 
 .modal-footer {
@@ -270,8 +279,4 @@ nav li:hover {
 
 .modal-back, .modal {
   transition: all 0.25s ease;
-}
-
-.modal li.selected {
-  background: blue;
 }

@@ -16,12 +16,27 @@ function updateInput (e) {
 }
 
 function saveFile () {
+  let newState = window.CURRENT_STATE
   // gets new name from modal input
-  let inputValue = mori.getIn(window.CURRENT_STATE, ['modal', 'input'])
+  let inputValue = mori.getIn(newState, ['modal', 'input'])
   // updates title with new input value
-  window.NEXT_STATE = mori.assoc(window.CURRENT_STATE, 'title', inputValue)
+  newState = mori.assoc(newState, 'title', inputValue)
+  // TODO: need to save file to DB
 
-  console.log(`Todo: save current file ${inputValue} to db`)
+  // this will close the modal and erase input and selected values
+  newState = mori.assocIn(newState, ['modal', 'input'], '')
+  newState = mori.assocIn(newState, ['modal', 'selectedFile'], null)
+  newState = mori.assocIn(newState, ['modal', 'modalType'], false)
+
+  window.NEXT_STATE = newState
+}
+
+function closeModal () {
+  // this close the modal
+  let newState = mori.assocIn(window.CURRENT_STATE, ['modal', 'modalType'], false)
+  newState = mori.assocIn(newState, ['modal', 'input'], '')
+  newState = mori.assocIn(newState, ['modal', 'selectedFile'], null)
+  window.NEXT_STATE = newState
 }
 
 function Modal (modalData) {
@@ -31,17 +46,18 @@ function Modal (modalData) {
   const modalInput = mori.get(modalData, 'input')
   const dbFiles = mori.get(modalData, 'dbFiles')
   const modal = mori.get(modalData, 'modalType')
+  const selectedFile = mori.get(modalData, 'selectedFile')
 
   if (modal) activeClass = 'active'
   if (modal === 'Save File') modalContent = modalSaveFile(modalInput)
-  if (modal === 'Open File') modalContent = modalOpenFile(dbFiles)
+  if (modal === 'Open File') modalContent = modalOpenFile(dbFiles, selectedFile)
 
   return (
     <div className={activeClass}>
       <div className='modal'>
         <div className='title'>{modal}
           <div className='btns-wrapper'>
-            <button onClick={toggleModal.bind(null, false)} ><i className='fa fa-times' /></button>
+            <button onClick={closeModal} ><i className='fa fa-times' /></button>
           </div>
         </div>
         {modalContent}
@@ -51,13 +67,12 @@ function Modal (modalData) {
   )
 }
 
-let fileSelected = null
-
 function selectFile (e) {
-  fileSelected = e.target.id
+  let fileId = e.target.id
+  window.NEXT_STATE = mori.assocIn(window.CURRENT_STATE, ['modal', 'selectedFile'], fileId)
 }
 
-function modalOpenFile (dbFiles) {
+function modalOpenFile (dbFiles, selectedFile) {
   let titlesArr = []
   let modalData = 'Loading ...'
   if (dbFiles) {
@@ -68,7 +83,9 @@ function modalOpenFile (dbFiles) {
     }
     modalData = titlesArr.map(function (item, i) {
       let classVal = null
-      if (fileSelected === i) classVal = 'selected'
+      if (selectedFile == i) {
+        classVal = 'selected'
+      }
       return <li key={i} id={i} className={classVal}>{item}</li>
     })
   }
@@ -76,7 +93,7 @@ function modalOpenFile (dbFiles) {
     <div>
       <ul onClick={selectFile} className='modal-body'>{modalData}</ul>
       <div className='modal-footer'>
-        <button onClick={toggleModal.bind(null, false)}>Cancel</button>
+        <button onClick={closeModal}>Cancel</button>
         <button onClick={openFile}>Open</button>
       </div>
     </div>
@@ -88,7 +105,7 @@ function modalSaveFile (modalInput) {
     <div>
       <div className='modal-footer'>
         <input value={modalInput} onChange={updateInput} />
-        <button onClick={toggleModal.bind(null, false)}>Cancel</button>
+        <button onClick={closeModal}>Cancel</button>
         <button onClick={saveFile}>Save</button>
       </div>
     </div>
