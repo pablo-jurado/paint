@@ -268,7 +268,10 @@ nav li:hover {
   pointer-events: auto;
 }
 
-
 .modal-back, .modal {
   transition: all 0.25s ease;
+}
+
+.modal li.selected {
+  background: blue;
 }

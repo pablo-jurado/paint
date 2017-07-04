@@ -2,27 +2,35 @@ import React from 'react'
 import { toggleModal } from './Nav'
 import mori from 'mori'
 
+const log = (...args) => {
+  console.log(...args.map(mori.toJs))
+}
+
 function openFile () {
   console.log('need to select and get files from DB')
 }
 
 function updateInput (e) {
   let newTitle = e.target.value
-  window.NEXT_STATE = mori.assoc(window.CURRENT_STATE, 'modalInput', newTitle)
+  window.NEXT_STATE = mori.assocIn(window.CURRENT_STATE, ['modal', 'input'], newTitle)
 }
 
 function saveFile () {
   // gets new name from modal input
-  let inputValue = mori.get(window.CURRENT_STATE, 'modalInput')
+  let inputValue = mori.getIn(window.CURRENT_STATE, ['modal', 'input'])
   // updates title with new input value
   window.NEXT_STATE = mori.assoc(window.CURRENT_STATE, 'title', inputValue)
 
-  console.log(`todo: save current file ${inputValue} to db`)
+  console.log(`Todo: save current file ${inputValue} to db`)
 }
 
-function Modal (modal, modalInput, dbFiles) {
+function Modal (modalData) {
   let activeClass = null
   let modalContent = null
+
+  const modalInput = mori.get(modalData, 'input')
+  const dbFiles = mori.get(modalData, 'dbFiles')
+  const modal = mori.get(modalData, 'modalType')
 
   if (modal) activeClass = 'active'
   if (modal === 'Save File') modalContent = modalSaveFile(modalInput)
@@ -43,6 +51,12 @@ function Modal (modal, modalInput, dbFiles) {
   )
 }
 
+let fileSelected = null
+
+function selectFile (e) {
+  fileSelected = e.target.id
+}
+
 function modalOpenFile (dbFiles) {
   let titlesArr = []
   let modalData = 'Loading ...'
@@ -53,12 +67,14 @@ function modalOpenFile (dbFiles) {
       }
     }
     modalData = titlesArr.map(function (item, i) {
-      return <li key={i}>{item}</li>
+      let classVal = null
+      if (fileSelected === i) classVal = 'selected'
+      return <li key={i} id={i} className={classVal}>{item}</li>
     })
   }
   return (
     <div>
-      <ul className='modal-body'>{modalData}</ul>
+      <ul onClick={selectFile} className='modal-body'>{modalData}</ul>
       <div className='modal-footer'>
         <button onClick={toggleModal.bind(null, false)}>Cancel</button>
         <button onClick={openFile}>Open</button>

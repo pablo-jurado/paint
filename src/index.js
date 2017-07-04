@@ -25,14 +25,16 @@ function createEmptyBoard () {
 window.EMPTY_BOARD = mori.toClj(createEmptyBoard())
 
 const initialState = {
+  title: 'Untitled',
   board: window.EMPTY_BOARD,
   color: 'black',
   history: 0,
-  dbFiles: null,
   view: 100,
-  modal: null,
-  modalInput: '',
-  title: 'Untitled'
+  modal: {
+    modalType: false,
+    input: '',
+    dbFiles: null
+  }
 }
 
 // CURRENT_STATE is always the current state of the application
@@ -56,7 +58,7 @@ function downloadFormDb () {
   dbRef.on('value', (snapshot) => {
     // success
     let dbData = snapshot.val()
-    window.NEXT_STATE = mori.assoc(window.CURRENT_STATE, 'dbFiles', dbData)
+    window.NEXT_STATE = mori.assocIn(window.CURRENT_STATE, ['modal', 'dbFiles'], dbData)
   }, function () {
     console.log('error')
   })
