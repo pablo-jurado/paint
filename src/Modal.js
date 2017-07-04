@@ -13,35 +13,20 @@ function updateInput (e) {
 
 function saveFile () {
   // gets new name from modal input
-  let newTitle = mori.get(window.CURRENT_STATE, 'modalInput')
-  // updates title with newone
-  window.NEXT_STATE = mori.assoc(window.CURRENT_STATE, 'title', newTitle)
+  let inputValue = mori.get(window.CURRENT_STATE, 'modalInput')
+  // updates title with new input value
+  window.NEXT_STATE = mori.assoc(window.CURRENT_STATE, 'title', inputValue)
 
-  console.log(`todo: save current file ${newTitle} to db`)
+  console.log(`todo: save current file ${inputValue} to db`)
 }
 
 function Modal (modal, modalInput, dbFiles) {
   let activeClass = null
-  let modalData = ''
-  let button = <button>Save</button>
-  let titlesArr = []
+  let modalContent = null
 
   if (modal) activeClass = 'active'
-  if (modal === 'Save File') button = <button onClick={saveFile}>Save</button>
-  if (modal === 'Open File') {
-    modalData = 'Loading ...'
-    button = <button onClick={openFile}>Open</button>
-    if (dbFiles) {
-      for (var id in dbFiles) {
-        if (dbFiles.hasOwnProperty(id)) {
-          titlesArr.push(dbFiles[id]['title'])
-        }
-      }
-      modalData = titlesArr.map(function (item, i) {
-        return <li key={i}>{item}</li>
-      })
-    }
-  }
+  if (modal === 'Save File') modalContent = modalSaveFile(modalInput)
+  if (modal === 'Open File') modalContent = modalOpenFile(dbFiles)
 
   return (
     <div className={activeClass}>
@@ -51,14 +36,45 @@ function Modal (modal, modalInput, dbFiles) {
             <button onClick={toggleModal.bind(null, false)} ><i className='fa fa-times' /></button>
           </div>
         </div>
-        <ul className='modal-body'>{modalData}</ul>
-        <div className='modal-footer'>
-          <input value={modalInput} onChange={updateInput} />
-          <button onClick={toggleModal.bind(null, false)}>Cancel</button>
-          {button}
-        </div>
+        {modalContent}
       </div>
       <div className='modal-back' />
+    </div>
+  )
+}
+
+function modalOpenFile (dbFiles) {
+  let titlesArr = []
+  let modalData = 'Loading ...'
+  if (dbFiles) {
+    for (var id in dbFiles) {
+      if (dbFiles.hasOwnProperty(id)) {
+        titlesArr.push(dbFiles[id]['title'])
+      }
+    }
+    modalData = titlesArr.map(function (item, i) {
+      return <li key={i}>{item}</li>
+    })
+  }
+  return (
+    <div>
+      <ul className='modal-body'>{modalData}</ul>
+      <div className='modal-footer'>
+        <button onClick={toggleModal.bind(null, false)}>Cancel</button>
+        <button onClick={openFile}>Open</button>
+      </div>
+    </div>
+  )
+}
+
+function modalSaveFile (modalInput) {
+  return (
+    <div>
+      <div className='modal-footer'>
+        <input value={modalInput} onChange={updateInput} />
+        <button onClick={toggleModal.bind(null, false)}>Cancel</button>
+        <button onClick={saveFile}>Save</button>
+      </div>
     </div>
   )
 }
