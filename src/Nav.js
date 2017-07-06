@@ -13,11 +13,6 @@ function goForward () {
   window.NEXT_STATE = window.HISTORY_STATE[incHistoryNum]
 }
 
-function clear () {
-  window.NEXT_STATE = mori.hashMap('board', window.EMPTY_BOARD, 'color', 'black', 'history', 0, 'view', 100)
-  window.HISTORY_STATE = [window.NEXT_STATE]
-}
-
 function changeView (num) {
   const state = window.CURRENT_STATE
   const newState = mori.assoc(state, 'view', num)
@@ -30,7 +25,8 @@ function toggleModal (modalType) {
 }
 
 function newFile () {
-  clear()
+  window.NEXT_STATE = mori.toClj(window.initialState)
+  window.HISTORY_STATE = [window.NEXT_STATE]
 }
 
 function Nav () {

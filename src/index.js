@@ -3,12 +3,16 @@ import App from './App'
 import mori from 'mori'
 import firebase from './firebase'
 
+const log = (...args) => {
+  console.log(...args.map(mori.toJs))
+}
+
 // -----------------------------------------------------------------------------
 // Application State
 // -----------------------------------------------------------------------------
 
 const numRows = 80
-const numCols = 150
+const numCols = 100
 
 function createEmptyBoard () {
   var board = []
@@ -22,9 +26,10 @@ function createEmptyBoard () {
   return board
 }
 
-window.EMPTY_BOARD = mori.toClj(createEmptyBoard())
+window.EMPTY_BOARD = createEmptyBoard()
 
-const initialState = {
+window.initialState = {
+  id: false,
   title: 'Untitled',
   board: window.EMPTY_BOARD,
   color: 'black',
@@ -33,8 +38,8 @@ const initialState = {
   modal: {
     modalType: false,
     input: '',
-    selectedFile: null,
-    dbFiles: null
+    selectedFile: false,
+    dbFiles: false
   }
 }
 
@@ -43,7 +48,7 @@ window.CURRENT_STATE = null
 
 // NEXT_STATE is the next state the application should be in
 // Start it off with a PDS version of our initialState object.
-window.NEXT_STATE = mori.toClj(initialState)
+window.NEXT_STATE = mori.toClj(window.initialState)
 
 window.HISTORY_STATE = []
 window.HISTORY_STATE.push(window.NEXT_STATE)
@@ -51,6 +56,15 @@ window.HISTORY_STATE.push(window.NEXT_STATE)
 // -----------------------------------------------------------------------------
 // DB
 // -----------------------------------------------------------------------------
+function objToArray (obj) {
+  var arr = []
+  for (var i in obj) {
+    if (!obj.hasOwnProperty(i)) continue
+    var itm = obj[i]
+    arr.push(itm)
+  }
+  return arr
+}
 
 function downloadFormDb () {
   // loading state
@@ -59,18 +73,22 @@ function downloadFormDb () {
   dbRef.on('value', (snapshot) => {
     // success
     let dbData = snapshot.val()
-    window.NEXT_STATE = mori.assocIn(window.CURRENT_STATE, ['modal', 'dbFiles'], dbData)
+    let moriData = mori.toClj(dbData)
+    log(moriData)
+    // window.NEXT_STATE = mori.assocIn(window.CURRENT_STATE, ['modal', 'dbFiles'], moriData)
   }, function () {
     console.log('error')
   })
 }
 
+// console.log(mori.toJs(initialState))
+
 function saveToDb (file) {
+  let jsFile = mori.toJs(file)
   const filesRef = firebase.database().ref('files')
-  filesRef.push(file)
+  filesRef.push(jsFile)
 }
 
-downloadFormDb()
 
 // -----------------------------------------------------------------------------
 // Render Loop

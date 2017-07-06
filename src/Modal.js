@@ -6,10 +6,6 @@ const log = (...args) => {
   console.log(...args.map(mori.toJs))
 }
 
-function openFile () {
-  console.log('need to select and get files from DB')
-}
-
 function updateInput (e) {
   let newTitle = e.target.value
   window.NEXT_STATE = mori.assocIn(window.CURRENT_STATE, ['modal', 'input'], newTitle)
@@ -72,23 +68,25 @@ function selectFile (e) {
   window.NEXT_STATE = mori.assocIn(window.CURRENT_STATE, ['modal', 'selectedFile'], fileId)
 }
 
+function openFile () {
+  let newState = window.CURRENT_STATE
+  const fileId = mori.getIn(newState, ['modal', 'selectedFile'])
+  const dbFiles = mori.getIn(newState, ['modal', 'dbFiles'])
+  window.NEXT_STATE = dbFiles[fileId]
+}
+
 function modalOpenFile (dbFiles, selectedFile) {
-  let titlesArr = []
   let modalData = 'Loading ...'
   if (dbFiles) {
-    for (var id in dbFiles) {
-      if (dbFiles.hasOwnProperty(id)) {
-        titlesArr.push(dbFiles[id]['title'])
-      }
-    }
-    modalData = titlesArr.map(function (item, i) {
+    modalData = dbFiles.map(function (item, i) {
       let classVal = null
       if (selectedFile == i) {
         classVal = 'selected'
       }
-      return <li key={i} id={i} className={classVal}>{item}</li>
+      return <li key={i} id={i} className={classVal}>{item.title}</li>
     })
   }
+
   return (
     <div>
       <ul onClick={selectFile} className='modal-body'>{modalData}</ul>
