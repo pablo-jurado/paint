@@ -10,6 +10,14 @@ body {
   padding-bottom: 20px;
   margin: 20px;
   border: solid 1px black;
+  display: table;
+  margin: 5% auto;
+  min-width: 700px;
+  box-shadow: 0 0 50px #015252;
+}
+
+.paint:focus {
+  outline:none;
 }
 
 .title {
