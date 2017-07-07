@@ -1,10 +1,6 @@
 import React from 'react'
-import { toggleModal } from './Nav'
 import mori from 'mori'
-
-const log = (...args) => {
-  console.log(...args.map(mori.toJs))
-}
+import firebase from './firebase'
 
 function updateInput (e) {
   let newTitle = e.target.value
@@ -18,7 +14,7 @@ function saveFile () {
   // updates title with new input value
   newState = mori.assoc(newState, 'title', inputValue)
   // TODO: need to save file to DB
-
+  saveToDb(newState)
   // this will close the modal and erase input and selected values
   newState = mori.assocIn(newState, ['modal', 'input'], '')
   newState = mori.assocIn(newState, ['modal', 'selectedFile'], null)
@@ -28,7 +24,6 @@ function saveFile () {
 }
 
 function closeModal () {
-  // this close the modal
   let newState = mori.assocIn(window.CURRENT_STATE, ['modal', 'modalType'], false)
   newState = mori.assocIn(newState, ['modal', 'input'], '')
   newState = mori.assocIn(newState, ['modal', 'selectedFile'], null)
@@ -40,13 +35,12 @@ function Modal (modalData) {
   let modalContent = null
 
   const modalInput = mori.get(modalData, 'input')
-  const dbFiles = mori.get(modalData, 'dbFiles')
   const modal = mori.get(modalData, 'modalType')
   const selectedFile = mori.get(modalData, 'selectedFile')
 
   if (modal) activeClass = 'active'
   if (modal === 'Save File') modalContent = modalSaveFile(modalInput)
-  if (modal === 'Open File') modalContent = modalOpenFile(dbFiles, selectedFile)
+  if (modal === 'Open File') modalContent = modalOpenFile(DB_FILES, selectedFile)
 
   return (
     <div className={activeClass}>
@@ -71,20 +65,27 @@ function selectFile (e) {
 function openFile () {
   let newState = window.CURRENT_STATE
   const fileId = mori.getIn(newState, ['modal', 'selectedFile'])
-  const dbFiles = mori.getIn(newState, ['modal', 'dbFiles'])
-  window.NEXT_STATE = dbFiles[fileId]
+  let dbFiles = mori.get(DB_FILES, fileId)
+  dbFiles = mori.assocIn(dbFiles, ['modal', 'modalType'], false)
+  window.NEXT_STATE = dbFiles
 }
 
 function modalOpenFile (dbFiles, selectedFile) {
   let modalData = 'Loading ...'
+  let titles = []
+
   if (dbFiles) {
-    modalData = dbFiles.map(function (item, i) {
+    mori.each(dbFiles, function (x) {
+      const fileId = mori.first(x)
+      const fileState = mori.nth(x, 1)
+
+      const title = mori.get(fileState, 'title')
       let classVal = null
-      if (selectedFile == i) {
-        classVal = 'selected'
-      }
-      return <li key={i} id={i} className={classVal}>{item.title}</li>
+      if (selectedFile === fileId) classVal = 'selected'
+      const element = <li key={fileId} id={fileId} className={classVal}>{title}</li>
+      titles.push(element)
     })
+    modalData = titles
   }
 
   return (
@@ -108,6 +109,32 @@ function modalSaveFile (modalInput) {
       </div>
     </div>
   )
+}
+
+// -----------------------------------------------------------------------------
+// DB
+// -----------------------------------------------------------------------------
+
+let DB_FILES = null
+
+function downloadFromDb () {
+  // loading state
+  console.log('loading db...')
+  const dbRef = firebase.database().ref('files')
+  dbRef.on('value', (snapshot) => {
+    DB_FILES = mori.toClj(snapshot.val())
+  }, function () {
+    console.log('error')
+  })
+}
+
+downloadFromDb()
+
+function saveToDb (file) {
+  console.log('saving to db')
+  let jsFile = mori.toJs(file)
+  const filesRef = firebase.database().ref('files')
+  filesRef.push(jsFile)
 }
 
 export default Modal

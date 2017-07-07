@@ -1,11 +1,6 @@
 import ReactDOM from 'react-dom'
 import App from './App'
 import mori from 'mori'
-import firebase from './firebase'
-
-const log = (...args) => {
-  console.log(...args.map(mori.toJs))
-}
 
 // -----------------------------------------------------------------------------
 // Application State
@@ -38,8 +33,7 @@ window.initialState = {
   modal: {
     modalType: false,
     input: '',
-    selectedFile: false,
-    dbFiles: false
+    selectedFile: false
   }
 }
 
@@ -52,43 +46,6 @@ window.NEXT_STATE = mori.toClj(window.initialState)
 
 window.HISTORY_STATE = []
 window.HISTORY_STATE.push(window.NEXT_STATE)
-
-// -----------------------------------------------------------------------------
-// DB
-// -----------------------------------------------------------------------------
-function objToArray (obj) {
-  var arr = []
-  for (var i in obj) {
-    if (!obj.hasOwnProperty(i)) continue
-    var itm = obj[i]
-    arr.push(itm)
-  }
-  return arr
-}
-
-function downloadFormDb () {
-  // loading state
-  console.log('loading db...')
-  const dbRef = firebase.database().ref('files')
-  dbRef.on('value', (snapshot) => {
-    // success
-    let dbData = snapshot.val()
-    let moriData = mori.toClj(dbData)
-    log(moriData)
-    // window.NEXT_STATE = mori.assocIn(window.CURRENT_STATE, ['modal', 'dbFiles'], moriData)
-  }, function () {
-    console.log('error')
-  })
-}
-
-// console.log(mori.toJs(initialState))
-
-function saveToDb (file) {
-  let jsFile = mori.toJs(file)
-  const filesRef = firebase.database().ref('files')
-  filesRef.push(jsFile)
-}
-
 
 // -----------------------------------------------------------------------------
 // Render Loop
