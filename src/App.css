@@ -157,14 +157,12 @@ nav li:hover {
 
 .row {
   display: flex;
+  line-height: 0;
 }
 
 .v100 .square { width: 6px; height: 6px; }
-.v100 .row { height: 6px; }
 
 .v50 .square { width: 3px; height: 3px; }
-.v50 .row { height: 3px; }
-
 
 .square.on {
   background: grey;
