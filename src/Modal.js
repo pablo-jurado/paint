@@ -13,12 +13,17 @@ function saveFile () {
   let inputValue = mori.getIn(newState, ['modal', 'input'])
   // updates title with new input value
   newState = mori.assoc(newState, 'title', inputValue)
-  // TODO: need to save file to DB
   saveToDb(newState)
   // this will close the modal and erase input and selected values
-  newState = mori.assocIn(newState, ['modal', 'input'], '')
-  newState = mori.assocIn(newState, ['modal', 'selectedFile'], null)
-  newState = mori.assocIn(newState, ['modal', 'modalType'], false)
+  // newState = mori.assocIn(newState, ['modal', 'input'], '')
+  // newState = mori.assocIn(newState, ['modal', 'selectedFile'], null)
+  // newState = mori.assocIn(newState, ['modal', 'modalType'], false)
+
+  var newModal = mori.hashMap('input', '',
+                              'selectedFile', null,
+                              'modalType', null)
+
+  newState = mori.assoc(newState, 'modal', newModal)
 
   window.NEXT_STATE = newState
 }
