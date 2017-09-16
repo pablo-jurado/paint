@@ -1,124 +1,89 @@
-import React from 'react'
 import './App.css'
-import { Map, List } from 'immutable'
+import React from 'react'
+import mori from 'mori'
+import { MoriComponent } from './MoriComponent'
+import Header from './Header'
+import { Nav, goBack, goForward } from './Nav'
+import Tools from './Tools'
+import Square from './Square'
+import Modal from './Modal'
 
+let keys = { control: false, z: false, y: false }
 
-let mouseDown = null
+function keyDownHandler (event) {
+  if (event.keyCode === 17) keys.control = true
+  if (event.keyCode === 90) keys.z = true
+  if (event.keyCode === 89) keys.y = true
 
-function App (state) {
-  let board = state.get('board')
-  let col = board.map(function (item, index) {
-    return <div key={index} className='row'>{Square(item, index)}</div>
-  })
-  return (
-    <div>
-      {header()}
-      {nav()}
-      <div className='main-wrapper'>
-        {Tools()}
-        <div className='board'>
-          {col}
-        </div>
-      </div>
-      <br />
-      <button onClick={clear}>clear</button>
-    </div>
-  )
+  if (keys.control && keys.z) goBack()
+  if (keys.control && keys.y) goForward()
 }
 
-function Square (rowMap, rowIndex) {
-  let classVal = ''
-  let piece = rowMap.map(function (item, i) {
-    if (item) {
-      classVal = 'square on'
-    } else {
-      classVal = 'square'
+function keyUpHandler (event) {
+  if (event.keyCode === 17) keys.control = false
+  if (event.keyCode === 90) keys.z = false
+  if (event.keyCode === 89) keys.y = false
+}
+
+class Row extends MoriComponent {
+  render () {
+    const rowVec = mori.get(this.props.imdata, 'rows')
+    const numCols = mori.count(rowVec)
+    const rowIdx = mori.get(this.props.imdata, 'rowIdx')
+    let squares = []
+    for (let colIdx = 0; colIdx < numCols; colIdx++) {
+      const currentState = window.CURRENT_STATE
+      const board = mori.get(currentState, 'board')
+      const row = mori.get(board, rowIdx)
+      const color = mori.get(row, colIdx)
+
+      let squareData = mori.hashMap('rowIdx', rowIdx, 'colIdx', colIdx, 'color', color)
+
+      squares.push(<Square imdata={squareData} key={colIdx} />)
     }
-    return <div key={i} onMouseUp={up}
-      onMouseDown={down}
-      onClick={handleClick.bind(null, rowIndex, i)}
-      onMouseOver={handleOver.bind(null, rowIndex, i)}
-      className={classVal} />
-  })
-  return piece
-}
 
-function handleClick (rowIdx, colIdx) {
-  updateState(rowIdx, colIdx)
-}
-
-function updateState (rowIdx, colIdx) {
-  // const state = window.CURRENT_STATE
-  // const board = state.get('board')
-  // const row = board.get(rowIdx)
-
-  // const newRow = row.set(colIdx, true)
-  // const newBoard = board.set(rowIdx, newRow)
-  // window.NEXT_STATE = state.set('board', newBoard)
-  window.NEXT_STATE = window.CURRENT_STATE.setIn(['board', rowIdx, colIdx], true)
-}
-
-function handleOver (rowIdx, colIdx) {
-  if (mouseDown) {
-    updateState(rowIdx, colIdx)
+    return (
+      <div className='row'>{squares}</div>
+    )
   }
 }
 
-function down () {
-  mouseDown = true
-}
+function App (props) {
+  const board = mori.get(props.imdata, 'board')
+  const numRows = mori.count(board)
+  const view = mori.get(props.imdata, 'view')
+  const color = mori.get(props.imdata, 'color')
+  const title = mori.get(props.imdata, 'title')
 
-function up () {
-  mouseDown = false
-  //console.log('save history')
-}
+  // const modal = mori.get(props.imdata, 'modal')
+  // const modalInput = mori.get(props.imdata, 'modalInput')
+  // const dbFiles = mori.get(props.imdata, 'dbFiles')
+  const modalData = mori.get(props.imdata, 'modal')
 
-function clear () {
-  // board = createNewBoard()
-  console.log('need to createNewBoard')
-}
+  let boardClass = `board v${view}`
 
-function Tools () {
-  let colors = ['green', 'red', 'orange', 'blue', 'purple', 'cyan', 'orange', 'blue', 'purple', 'cyan']
-  let palet = colors.map(function (color, i) {
-    return <div key={i} className={color} />
-  })
+  let rows = []
+  for (let rowIdx = 0; rowIdx < numRows; rowIdx++) {
+    let rowVec = mori.get(board, rowIdx)
+    let rowData = mori.hashMap('rows', rowVec, 'rowIdx', rowIdx)
+
+    rows.push(<Row imdata={rowData} key={rowIdx} />)
+  }
+
   return (
-    <div className='tools'>
-      <div className='pencil'><i className='fa fa-pencil' /></div>
-      <div className='erase'><i className='fa fa-eraser' /></div>
-      {palet}
-    </div>
-  )
-}
-
-function nav () {
-  return (
-    <nav>
-      <ul>
-        <li>
-          <div className='btn-drop'>File</div>
-          <div className='dropdown-content'>
-            <div>Open</div>
-            <div>Save</div>
-            <div>Close</div>
-          </div>
-        </li>
-        <li>Edit</li>
-        <li>View</li>
-      </ul>
-    </nav>
-  )
-}
-
-function header () {
-  return (
-    <div className='title'><i className='fa fa-paint-brush' /> Untitled - Paint
-      <div className='btns-wrapper'>
-        <button><i className='fa fa-window-minimize' /></button>
-        <button><i className='fa fa-window-maximize' /></button>
-        <button><i className='fa fa-times' /></button>
+    <div>
+      <div tabIndex='0' onKeyDown={keyDownHandler} onKeyUp={keyUpHandler} className='paint'>
+        {Header(title)}
+        {Nav()}
+        <div className='main-wrapper'>
+          {Tools(color)}
+          <div className={boardClass}>{rows}</div>
+        </div>
       </div>
+      <div className='bar'>
+        <a className='start-btn'>Start</a>
+      </div>
+      {Modal(modalData)}
     </div>
   )
 }
