@@ -4,11 +4,13 @@
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app)
 and deploy with [Surge](http://surge.sh/)
 
+[Link](http://paint-mori-react.surge.sh/)
+
 <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard - JavaScript Style Guide">
 
-> This is a functional [Paint] application that uses [persistent data structure] to keep track of the drawing history (you can use control + z) and also lets you save your drawings in the data base.
+> This is a functional [Paint] application that uses [persistent data structure] to keep track of the drawing history (you can use control + z) and also lets you save your drawings in the database.
 
-<img src="img/screenshot.png" alt="React App Screen shot">
+<img src="img/screenshot.png" alt="React App Screenshot">
 
 
 ## Tech/framework used
